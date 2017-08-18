@@ -1,0 +1,209 @@
+.browser {
+  flex-grow: 1;
+  flex-basis: 300px;
+  min-width: 360px;
+  padding: 1px;
+  display: flex;
+  flex-direction: column;
+  font: 9pt Helvetica;
+  line-height: 18px;
+  background: #bfbfbf;
+  box-shadow: 1px 1px 0 #bfbfbf inset,
+    -1px 0 0 #222 inset,
+    -2px -2px 0 #888 inset,
+    2px 2px 0 #fff inset;
+}
+
+.browser .window-title {
+  background-color: #000;
+  color: #25d8fd;
+  display: flex;
+  font-weight: bold;
+  margin: 3px 3px 0 3px;
+  height: 18px;
+}
+.browser .title-text {
+  flex-basis: 154px;
+}
+.browser .space1 {
+  flex-basis: calc(100% - 225px);
+}
+
+.browser .window-btns {
+  display: inline-block;
+  margin-top: 2px;
+}
+.browser .window-btns button {
+  border: 0;
+  border-radius: 0;
+  box-shadow: 1px 1px 0 #fff inset, -1px -1px 0 #888 inset;
+  font-weight: bold;
+  font-size: 7pt;
+  line-height: 10px;
+  margin-left: -2px;
+  width: 15px;
+  height: 13px;
+  vertical-align: top;
+}
+.browser .window-btns button:last-of-type {
+  margin-left: 0;
+}
+
+.browser .btns {
+  margin-left: 10px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  line-height: 0;
+}
+
+.browser .btns button:nth-of-type(even):nth-child(-n+4),
+.browser .btns button:nth-child(n+5):nth-child(-n+7) {
+  margin-right: 5px;
+}
+.browser .btns button:nth-of-type(even):nth-child(-n+4) {
+  transform: translateX(-1px);
+}
+.browser .btns button:active .sprite {
+  top: 1px;
+  left: 1px;
+}
+
+.browser button {
+  background-color: #bfbfbf;
+  border: 1px solid #000;
+  border-radius: 2px;
+  box-shadow: 1px 1px 0 #fff inset,
+    -2px -2px 0 #888 inset;
+  -webkit-appearance: none;
+  width: 24px;
+  height: 22px;
+  outline: 0;
+  position: relative;
+}
+.browser button .sprite {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+}
+.browser button:active {
+  box-shadow: 1px 1px 0 #888 inset, -1px -1px 0 #fff inset;
+}
+
+.browser hr {
+  border-top: 1px solid #000;
+  border-right: 1px solid transparent;
+  border-bottom: 0;
+  border-left: 1px solid transparent;
+  width: calc(100% - 4px);
+  margin: 0 auto;
+}
+.browser hr:last-of-type {
+  margin: 1px auto;
+}
+
+.browser .navigation {
+  display: inline-flex;
+  height: 58px;
+  width: 100%;
+}
+
+.browser form, .browser input {
+  font-weight: bold;
+}
+
+.browser form {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  height: 100%;
+  width: calc(100% - 60px);
+}
+
+.browser label {
+  flex-basis: 92px;
+  margin: 0 16px 0 12px;
+}
+
+.browser input {
+  outline: 0;
+  border: 1px solid #000;
+  border-radius: 0;
+  background: transparent;
+  flex-basis: calc(100% - 125px);
+  font-size: 9pt;
+  height: 22px;
+  padding: 2px 1px 3px 2px;
+  -webkit-appearance: none;
+}
+.browser input:first-of-type {
+  text-indent: 10px;
+}
+.browser input:disabled {
+  color: #000;
+  -webkit-text-fill-color: #000;
+}
+
+.browser > * {
+  flex-shrink: 0;
+}
+
+.browser iframe {
+  flex-grow: 1;
+  background: #fff;
+  border: 0;
+  margin-left: 4px;
+  width: calc(100% - 8px);
+}
+
+.browser .window-bottom {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 6px;
+  text-align: center;
+}
+.browser .window-bottom div {
+  box-shadow: 1px 1px 0 #888 inset, -1px -1px 0 #fff inset;
+  margin-left: 2px;
+  margin-bottom: 2px;
+  padding: 1px 2px;
+  width: 33px;
+  height: 16px;
+}
+.browser .window-bottom div:last-of-type {
+  width: 40px;
+}
+
+/* LOGO STUFF */
+
+.browser .logo.loading {
+  background-image: url('img/nyan.gif');
+}
+.browser .logo {
+  background-image: url('img/fido.png');
+  background-size: 50px;
+  background-repeat: no-repeat;
+  background-position: 3px 3px;
+  image-rendering: pixelated;
+  border: 1px solid #000;
+  box-shadow: 2px 2px 0 #fff inset, -1px -1px 0 #888 inset;
+  margin-right: 4px;
+  width: 58px;
+  height: 58px;
+}
+
+.browser .window-icon {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAUElEQVQ4T2NkoBAwUqifYRAZoHrj73+Yd25rMGN1GTY1YIUgCWRN6HyYGvTwAulhxKYY3VBkm9ENGQQGUBwGMD9RFAuUpMZBlBLJ9QbFXgAAkghI/NMoijIAAAAASUVORK5CYIIA');
+  background-position: 2px 0;
+  background-repeat: no-repeat;
+  content: "";
+  display: inline-block;
+  image-rendering: pixelated;
+  margin: 1px 0 0 0;
+  width: 20px;
+  height: 16px;
+  flex-basis: 20px;
+}
+

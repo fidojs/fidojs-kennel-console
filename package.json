@@ -1,0 +1,24 @@
+{
+  "name": "@fidojs/fidojs-kennel-console",
+  "version": "0.1.0",
+  "description": "A retro console for FidoJS.",
+  "homepage": "https://github.com/fidojs/fidojs-kennel-console#readme",
+  "bugs": {
+    "url": "https://github.com/fidojs/fidojs-kennel-console/issues"
+  },
+  "license": "MIT",
+  "author": "Bitovi",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fidojs/fidojs-kennel-console.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "express": "*",
+    "socket.io": "*"
+  },
+  "dependencies": {}
+}
