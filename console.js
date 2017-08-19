@@ -1,4 +1,9 @@
 (function app(){
+
+  //
+  // Console
+  //
+
   var browser = document.getElementById("browser"),
       titleBar = document.getElementsByClassName("window-title")[0],
       titleBarH = 26,
@@ -7,74 +12,78 @@
       docWin = doc.contentWindow.document || doc.contentDocument,
       docTitle = document.getElementById("doc_title"),
       docUrl = document.getElementById("doc_url"),
-      appDir = '/app',
-      history = [""],
-      currentItem = 1,
       maximized = false,
       minimized = false,
-      socket = io(),
+      backBtn = document.getElementById("back"),
+      fwdBtn = document.getElementById("forward"),
+
+      termout = document.getElementById('termout'),
+      commandEl = document.getElementById('commands'),
+      helpContent = document.getElementById('helpContent'),
       curPre,
       curType,
-      isCurPreAppended = false,
-      wasNewline = false,
       group = '',
+      wasNewline = false,
+      appDir = '/app',
+      socket = io(),
       packageJSON = {},
       
-      // spawn a browser window
-      spawnBrowser = function() {
+      //
+      // Document Browser
+      //
+
+      bindBrowser = function() {
+        // capture keys
+        document.onkeydown = checkKey;
+        
+        // register events
+        var eleEvents = [
+            ["maximize", maximize],
+            ["minimize", minimize],
+            ["close", closeWin],
+            ["back", goBack],
+            ["forward", goForward],
+            ["refresh", refreshDoc],
+            ["home", goHome],
+            ["print", printDoc],
+            ["help", showHelp],
+            ["open", openTab],
+            ["fido", openFido]
+          ];
+        
+        // add all event listeners for userEvent (touchend or click)
+        for (var i = 0; i < eleEvents.length; ++i) {
+          document.getElementById(eleEvents[i][0]).addEventListener(userEvent, eleEvents[i][1]);
+        }
+
+        // when iframe loads
         doc.onload = function(){
           docWin = doc.contentWindow.document || doc.contentDocument;
-        	docTitle.value = docWin.title;
-					docUrl.value = docWin.location.href;
-
-          if (docWin.location.href !== history[currentItem]) {
-            history[currentItem] = docWin.location.href;
-            currentItem++;
-          }
+          docTitle.value = docWin.title;
+          docUrl.value = docWin.location.href;
         };
 
-        checkItem();
+        checkHistory();
       },
       // choose when to disable back and forward buttons
-      checkItem = function() {
-        var backBtn = document.getElementById("back"),
-            fwdBtn = document.getElementById("forward");
-        
-        if (history.length > 1) {
-          if (currentItem == 1) {
-          	backBtn.disabled = true;
-            fwdBtn.disabled = false;
-            
-          } else if (currentItem == history.length) {
-            fwdBtn.disabled = true;
-            backBtn.disabled = false;
-            
-          } else {
-            backBtn.disabled = false;
-            fwdBtn.disabled = false;
-          }
-        } else {
-          backBtn.disabled = true;
-          fwdBtn.disabled = true;
-        }
+      checkHistory = function() {
+        backBtn.disabled = true;
+        fwdBtn.disabled = true;
       },
-      // reset
       reset = function() {
-          document.body.className = "";
-          minimized = false;
-          maximized = false;
+        minimized = false;
+        maximized = false;
+        document.body.className = "";
       },
-      // minimize
       minimize = function() {
         if (minimized) {
           reset();
         } else {
           reset();
-          document.body.className = "minimized";
           minimized = true;
+          document.body.className = "minimized";
         }
       },
-      // maximize
       maximize = function() {
         if (maximized) {
           reset();
@@ -84,44 +93,22 @@
           maximized = true;
         }
       },
-      // close
       closeWin = function() {
-        history = [""],
-      	currentItem = 1,
-        checkItem();
         docUrl.value = "",
         browser.style.display = "none";
       },
-      // back
       goBack = function() {
         alert( 'History is not implemented yet' );
-        return;
-        if (history.length > 0 && currentItem > 1) {
-        	--currentItem;
-        	doc.src = history[currentItem-1];
-          docUrl.value = currentItem == 1 ? appDir : doc.src;
-          checkItem();
-        }
       },
-      // forward
       goForward = function() {
         alert( 'History is not implemented yet' );
-        return;
-        if (currentItem != history.length && history.length > 0) {
-        	++currentItem;
-        	doc.src = history[currentItem-1];
-          docUrl.value = doc.src;
-          checkItem();
-        }
       },
-      // refresh
       refreshDoc = function() {
         var loc = doc.contentWindow.location.href;
         doc.src = "";
         doc.src = loc;
         docUrl.value = loc;
       },
-      // print
       printDoc = function() {
         console.log(doc.contentWindow.window.docObject);
         log('docObject for ' + docWin.location.href, 'command');
@@ -131,9 +118,10 @@
         doc.src = "";
         doc.src = appDir;
       },
+      // move help to bottom in console
       showHelp = function() {
-        document.getElementById('termout').appendChild(document.getElementById('helpContent'));
-        scrollDown();
+        termout.appendChild(helpContent);
+        scrollDown(true);
       },
       openTab = function() {
         window.open(doc.src);
@@ -141,20 +129,69 @@
       openFido = function() {
         window.open('https://github.com/fidojs');
       },
-      // website access
+      // capture enter event
       checkKey = function(e) {
         e = e || window.event;
         if (e.keyCode == '13' && docUrl.value != "") {
-            doc.src = docUrl.value;
-            history[history.length] = doc.src;
-            currentItem = history.length;
-          	docUrl.value = doc.src;
-          	checkItem();
-            return false;
-      	}
+          doc.src = docUrl.value;
+          docUrl.value = doc.src;
+          return false;
+        }
       },
-      npmRunCommand = function(command) {
-        socket.emit('npm-run', { task: command.target.dataset.command });
+
+      //
+      // Terminal
+      //
+
+      bindTerminal = function() {
+        // log socket data
+        socket.on('stdout', function (data) {
+          log(decode(data), 'stdout');
+        });
+        socket.on('stderr', function (data) {
+          log(decode(data), 'stderr');
+        });
+        socket.on('command', function (data) {
+          log(data, 'command');
+        });
+        socket.on('command-error', function (data) {
+          log(data, 'stderr');
+        });
+
+        // package configuration
+        socket.on('package-json', function (data) {
+          packageJSON = data;
+
+          if ( packageJSON.hasOwnProperty('scripts') ) {
+            setupHelp(Object.keys(packageJSON.scripts));
+          }
+        });
+
+        // route configuration
+        socket.on('dist-route', function (newAppDir) {
+          if (newAppDir !== appDir) {
+            appDir = newAppDir;
+            doc.src = "";
+            doc.src = appDir;
+          }
+        });
+
+        // one-time message about Glitch settings
+        socket.on('project-domain', function (data) {
+          var replace = '(?:(?:^|.*;\\s*)' + data + '\\s*\\=\\s*([^;]*).*$)|^.*$';
+          var re = new RegExp(replace);
+          if (document.cookie.replace(re, "$1") !== "true") {
+            alert('Make sure you disable "Refresh App on Changes" in Glitch settings!');
+            document.cookie = data + '=true; expires=Fri, 31 Dec 9999 23:59:59 GMT';
+          }
+          // @TODO(leoj3n): Set a password cookie for command running.
+        });
+      },
+      scrollDown = function(force) {
+        var div = termout.parentNode;
+        if (force || (div.scrollTop >= (div.scrollHeight - div.offsetHeight - 100)) ) {
+          div.scrollTop = div.scrollHeight;
+        }
       },
       setupHelp = function(scripts) {
         // filter out native npm commmands; these should be automated by the
@@ -167,13 +204,12 @@
                    'stop', 'poststop', 'prestart', 'start', 'poststart',
                    'prerestart', 'restart', 'postrestart', 'preshrinkwrap',
                    'shrinkwrap', 'postshrinkwrap'].indexOf(key) > -1);
-        });
+          });
 
-        var commandEl = document.getElementById('commands');
         commandEl.innerHTML = '';
 
         if (commands.length > 0) {
-            commandEl.appendChild(document.createTextNode('npm run: '));
+          commandEl.appendChild(document.createTextNode('npm run: '));
         }
 
         for (var i = 0; i < commands.length; i++) {
@@ -186,6 +222,9 @@
             commandEl.appendChild(document.createTextNode(' | '));
           }
         }
+      },
+      npmRunCommand = function(command) {
+        socket.emit('npm-run', { task: command.target.dataset.command });
       },
       decode = function(data) {
         var dataView = new DataView(data);
@@ -243,7 +282,7 @@
       newPre = function() {
         curPre = document.createElement('PRE');
         curPre.className = curType + ' ' + group;
-        document.getElementById('termout').appendChild(curPre);
+        termout.appendChild(curPre);
         scrollDown();
       },
       log = function(msg, type) {
@@ -273,79 +312,9 @@
           curPre.appendChild(document.createTextNode(text));
           setGroup();
         }
-      },
-      scrollDown = function() {
-        var div = document.getElementById('termout').parentNode;
-        if (div.scrollTop >= (div.scrollHeight - div.offsetHeight - 100)) {
-          div.scrollTop = div.scrollHeight;
-        }
       };
 
-  // log socket data
-  socket.on('stdout', function (data) {
-    log(decode(data), 'stdout');
-  });
-  socket.on('stderr', function (data) {
-    log(decode(data), 'stderr');
-  });
-  socket.on('command', function (data) {
-    log(data, 'command');
-  });
-  socket.on('command-error', function (data) {
-    log(data, 'stderr');
-  });
-
-  socket.on('package-json', function (data) {
-    packageJSON = data;
-
-    if ( packageJSON.hasOwnProperty('scripts') ) {
-      setupHelp(Object.keys(packageJSON.scripts));
-    }
-  });
-
-  socket.on('dist-route', function (newAppDir) {
-    if (newAppDir !== appDir) {
-      appDir = newAppDir;
-      doc.src = "";
-      doc.src = appDir;
-    }
-  });
-
-  // issue a one-time message about Glitch settings
-  socket.on('project-domain', function (data) {
-    var replace = '(?:(?:^|.*;\\s*)' + data +
-      '\\s*\\=\\s*([^;]*).*$)|^.*$';
-    var re = new RegExp(replace);
-    if (document.cookie.replace(re, "$1") !== "true") {
-      alert('Make sure you disable "Refresh App on Changes" in Glitch settings!');
-
-      document.cookie = data + '=true; expires=Fri, 31 Dec 9999 23:59:59 GMT';
-    }
-  });
-
-  spawnBrowser();
-  
-  // capture keys
-  document.onkeydown = checkKey;
-  
-  // register events
-  var eleEvents = [
-			["maximize", maximize],
-			["minimize", minimize],
-			["close", closeWin],
-			["back", goBack],
-			["forward", goForward],
-			["refresh", refreshDoc],
-			["home", goHome],
-			["print", printDoc],
-			["help", showHelp],
-			["open", openTab],
-			["fido", openFido]
-		];
-  
-  // add all event listeners for userEvent (touchend or click)
-  for (var i = 0; i < eleEvents.length; ++i) {
-  	document.getElementById(eleEvents[i][0]).addEventListener(userEvent, eleEvents[i][1]);
-  }
+  bindBrowser();
+  bindTerminal();
   
 })();
