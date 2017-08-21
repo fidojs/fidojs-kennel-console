@@ -236,6 +236,12 @@
       setGroup = function() {
         var text = curPre.textContent;
 
+        if (/^WARNING:/.test(text)) {
+          group = 'group-warning';
+        } else if(group === 'group-warning') {
+          group = '';
+        }
+
         if (/^BUILD:/.test(text)) {
           group = 'group-build';
         } else if(group === 'group-build') {

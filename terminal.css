@@ -150,6 +150,9 @@
   color: #031e11;
 }
 
+.group-warning::before {
+  content: '⚠️ ';
+}
 .group-build::before {
   content: '🚧 ';
 }
