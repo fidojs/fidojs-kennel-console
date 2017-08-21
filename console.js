@@ -113,6 +113,7 @@
         console.log(doc.contentWindow.window.docObject);
         log('docObject for ' + docWin.location.href, 'command');
         log("\n" + JSON.stringify(doc.contentWindow.window.docObject, null, 2) + "\n", 'object');
+        scrollDown(true);
       },
       goHome = function() {
         doc.src = "";
