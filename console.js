@@ -68,6 +68,9 @@
         // when iframe loads
         doc.onload = function(){
           docWin = doc.contentWindow.document || doc.contentDocument;
+          if (docTitle.value !== docWin.title) {
+            requestFile();
+          }
           docTitle.value = docWin.title;
           docUrl.value = docWin.location.href;
         };
@@ -133,6 +136,9 @@
           style.display = "none";
         }
 
+        requestFile();
+      },
+      requestFile = function() {
         socket.emit('request-file', { path: getDocObjectPath() });
       },
       getDocObjectPath = function() {
@@ -356,7 +362,6 @@
         editor.parentNode.style.display = "none";
 
         socket.on('receive-file', function (data) {
-          console.log(data);
           mirror.getDoc().setValue(data);
         });
 
@@ -371,10 +376,5 @@
   bindBrowser();
   bindTerminal();
   bindEditor();
-
-  // Handle errors.
-  socket.on('error', (err) => {
-    console.warn('SocketIO Error: ', err);
-  });
   
 })();
