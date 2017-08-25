@@ -21,12 +21,5 @@
     "codemirror": "*",
     "express": "*",
     "socket.io": "*"
-  },
-  "meta": {
-    "codemirror": {
-      "format": "global",
-      "exports": "CodeMirror"
-    }
-  },
-  "steal": {}
+  }
 }
