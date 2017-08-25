@@ -3,6 +3,6 @@ const path = require('path');
 
 const app = express();
 app.use(express.static(__dirname, {index: 'console.html'}));
-app.use('/socket.io', express.static(path.dirname(require.resolve('socket.io'))));
+app.use('/codemirror', express.static(path.dirname(path.dirname(require.resolve('codemirror')))));
 
 module.exports = app;

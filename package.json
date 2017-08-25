@@ -14,11 +14,19 @@
     "url": "git+https://github.com/fidojs/fidojs-kennel-console.git"
   },
   "scripts": {
+    "build": "steal-tools",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
+    "codemirror": "*",
     "express": "*",
     "socket.io": "*"
   },
-  "dependencies": {}
+  "meta": {
+    "codemirror": {
+      "format": "global",
+      "exports": "CodeMirror"
+    }
+  },
+  "steal": {}
 }

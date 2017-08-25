@@ -8,6 +8,9 @@
   <link type="text/css" rel="stylesheet" href="icons.css">
   <link type="text/css" rel="stylesheet" href="browser.css">
   <link type="text/css" rel="stylesheet" href="terminal.css">
+  <link type="text/css" rel="stylesheet" href="editor.css">
+  <link type="text/css" rel="stylesheet" href="/codemirror/lib/codemirror.css">
+  <link type="text/css" rel="stylesheet" href="/codemirror/theme/blackboard.css">
   <style>
   * {
     margin: 0;
@@ -33,7 +36,14 @@
     background: #080808;
   }
 
-  .minimized {
+  .split {
+    flex-grow: 1;
+    flex-basis: 300px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .minimized .split {
     flex-direction: column !important;
   }
 
@@ -50,7 +60,7 @@
   }
 
   @media only screen and (min-width: 1200px) {
-    body {
+    .split {
       flex-direction: row;
     }
   }
@@ -58,79 +68,94 @@
 </head>
 
 <body>
-  <div class="browser" id="browser">
-    <div class="window-title">
-      <div class="window-icon"></div>
-      <div class="title-text">Document Browser</div>
-      <div class="space1"></div>
-      <div class="window-btns">
-        <button id="minimize">
-          <div class="sprite minimize"></div>
-        </button>
-        <button id="maximize">
-          <div class="sprite maximize"></div>
-        </button>
-        <button id="close">
-          <div class="sprite close"></div>
-        </button>
-      </div>
-    </div>
-    <div class="btns">
-      <button id="back" disabled="">
-        <div class="sprite back_icon"></div>
-      </button>
-      <button id="forward" disabled="">
-        <div class="sprite fwd_icon"></div>
-      </button>
-      <button id="refresh">
-        <div class="sprite refresh_icon"></div>
-      </button>
-      <button id="home">
-        <div class="sprite home_icon"></div>
-      </button>
-      <button id="print">
-        <div class="sprite print_icon"></div>
-      </button>
-      <button id="help">
-        <div class="sprite help_icon"></div>
-      </button>
-      <button id="open">
-        <div class="sprite open_icon"></div>
-      </button>
-    </div>
-    <hr/>
-    <div class="navigation">
-      <form>
-        <label>Document Title:</label>
-        <input type="text" id="doc_title" disabled="disabled"/>
-        <label>Document URL:</label>
-        <input type="text" id="doc_url"/>
-      </form>
-      <div class="logo" id="fido"></div>
-    </div>
-    <hr/>
-    <iframe id="doc" src="/doc"></iframe>
-    <hr/>
-    <div class="window-bottom">
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
-  </div>
+  <div class="split">
 
-  <div class="terminal">
-    <div class="piece output">
-      <div id="termout">
-        <div id="helpContent">
-          <h1>Terminal</h1>
-          <p id="commands"></p>
+    <div class="browser" id="browser">
+      <div class="window-title">
+        <div class="window-icon"></div>
+        <div class="title-text">Document Browser</div>
+        <div class="space1"></div>
+        <div class="window-btns">
+          <button id="minimize">
+            <div class="sprite minimize"></div>
+          </button>
+          <button id="maximize">
+            <div class="sprite maximize"></div>
+          </button>
+          <button id="close">
+            <div class="sprite close"></div>
+          </button>
         </div>
       </div>
+      <div class="btns">
+        <button id="back" disabled="">
+          <div class="sprite back_icon"></div>
+        </button>
+        <button id="forward" disabled="">
+          <div class="sprite fwd_icon"></div>
+        </button>
+        <button id="refresh">
+          <div class="sprite refresh_icon"></div>
+        </button>
+        <button id="home">
+          <div class="sprite home_icon"></div>
+        </button>
+        <button id="print">
+          <div class="sprite print_icon"></div>
+        </button>
+        <button id="paper">
+          <div class="sprite paper_icon"></div>
+        </button>
+        <button id="help">
+          <div class="sprite help_icon"></div>
+        </button>
+        <button id="open">
+          <div class="sprite open_icon"></div>
+        </button>
+      </div>
+      <hr/>
+      <div class="navigation">
+        <form>
+          <label>Document Title:</label>
+          <input type="text" id="doc_title" disabled="disabled"/>
+          <label>Document URL:</label>
+          <input type="text" id="doc_url"/>
+        </form>
+        <div class="logo" id="fido"></div>
+      </div>
+      <hr/>
+      <iframe id="doc" src="/doc"></iframe>
+      <hr/>
+      <div class="window-bottom">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
     </div>
-    <div class="piece noclick rounded scanlines"></div>
-    <div class="piece noclick rounded frame"></div>
-    <div class="piece noclick glow"></div>
+
+    <div class="terminal">
+      <div class="piece output">
+        <div id="termout">
+          <div id="helpContent">
+            <h1>Terminal</h1>
+            <p id="commands"></p>
+          </div>
+        </div>
+      </div>
+      <div class="piece noclick rounded scanlines"></div>
+      <div class="piece noclick rounded frame"></div>
+      <div class="piece noclick glow"></div>
+    </div>
+
   </div>
+
+  <div class="editor">
+    <textarea id="editor">var thing = 'thing';</textarea>
+  </div>
+
+  <script src="/codemirror/lib/codemirror.js"></script>
+  <script src="/codemirror/mode/javascript/javascript.js"></script>
+  <script src="/codemirror/addon/edit/matchbrackets.js"></script>
 
   <script src="/socket.io/socket.io.js"></script>
   <script type="text/javascript" src="console.js"></script>

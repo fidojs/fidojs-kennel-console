@@ -27,7 +27,15 @@
       appDir = '/app',
       socket = io(),
       packageJSON = {},
-      
+
+      editor = document.getElementById("editor"),
+      mirror = CodeMirror.fromTextArea(editor, {
+					lineNumbers: true,
+					mode: "javascript",
+					matchBrackets: true,
+					theme: "blackboard"
+      }),
+
       //
       // Document Browser
       //
@@ -46,6 +54,7 @@
             ["refresh", refreshDoc],
             ["home", goHome],
             ["print", printDoc],
+            ["paper", toggleEditor],
             ["help", showHelp],
             ["open", openTab],
             ["fido", openFido]
@@ -94,6 +103,7 @@
         }
       },
       closeWin = function() {
+        reset();
         docUrl.value = "",
         browser.style.display = "none";
       },
@@ -114,6 +124,25 @@
         log('docObject for ' + docWin.location.href, 'command');
         log("\n" + JSON.stringify(doc.contentWindow.window.docObject, null, 2) + "\n", 'object');
         scrollDown(true);
+      },
+      toggleEditor = function() {
+        var style = editor.parentNode.style;
+        if (style.display == "none") {
+          style.display = "";
+        } else {
+          style.display = "none";
+        }
+
+        socket.emit('request-file', { path: getDocObjectPath() });
+      },
+      getDocObjectPath = function() {
+        var docObject = doc.contentWindow.window.docObject;
+
+        if (docObject.hasOwnProperty('src')) {
+          return docObject['src']['path'];
+        } else {
+          return '';
+        }
       },
       goHome = function() {
         doc.src = "";
@@ -154,6 +183,9 @@
         });
         socket.on('command', function (data) {
           log(data, 'command');
+        });
+        socket.on('command-end', function (data) {
+          showHelp();
         });
         socket.on('command-error', function (data) {
           log(data, 'stderr');
@@ -319,9 +351,30 @@
           curPre.appendChild(document.createTextNode(text));
           setGroup();
         }
+      },
+      bindEditor = function() {
+        editor.parentNode.style.display = "none";
+
+        socket.on('receive-file', function (data) {
+          console.log(data);
+          mirror.getDoc().setValue(data);
+        });
+
+        mirror.on('change', function(cm, obj){
+          socket.emit('write-file', {
+            path: getDocObjectPath(),
+            content: cm.getValue()
+          });
+        });
       };
 
   bindBrowser();
   bindTerminal();
+  bindEditor();
+
+  // Handle errors.
+  socket.on('error', (err) => {
+    console.warn('SocketIO Error: ', err);
+  });
   
 })();
