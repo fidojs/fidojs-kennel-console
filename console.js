@@ -187,14 +187,14 @@
         socket.on('stderr', function (data) {
           log(decode(data), 'stderr');
         });
-        socket.on('command', function (data) {
-          log(data, 'command');
+        socket.on('command', function (message) {
+          log(message, 'command');
         });
-        socket.on('command-end', function (data) {
+        socket.on('command-end', function () {
           showHelp();
         });
-        socket.on('command-error', function (data) {
-          log(data, 'stderr');
+        socket.on('command-error', function (message) {
+          log(message + "\n", 'stderr');
         });
 
         // package configuration
