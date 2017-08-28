@@ -249,11 +249,12 @@
         var commands = scripts.filter(function(key) {
           return !(['prepublish', 'prepare', 'prepublishOnly', 'prepack',
                    'postpack', 'publish', 'preinstall', 'install',
-                   'preuninstall', 'postuninstall', 'preversion', 'version',
-                   'postversion', 'pretest', 'test', 'posttest', 'prestop',
-                   'stop', 'poststop', 'prestart', 'start', 'poststart',
-                   'prerestart', 'restart', 'postrestart', 'preshrinkwrap',
-                   'shrinkwrap', 'postshrinkwrap'].indexOf(key) > -1);
+                   'postinstall', 'preuninstall', 'postuninstall',
+                   'preversion', 'version', 'postversion', 'pretest', 'test',
+                   'posttest', 'prestop', 'stop', 'poststop', 'prestart',
+                   'start', 'poststart', 'prerestart', 'restart',
+                   'postrestart', 'preshrinkwrap', 'shrinkwrap',
+                   'postshrinkwrap'].indexOf(key) > -1);
           });
 
         commandEl.innerHTML = '';
