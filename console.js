@@ -131,6 +131,7 @@
       },
       toggleEditor = function() {
         var style = editor.parentNode.style;
+
         if (style.display == "none") {
           requestFile();
           style.display = "";
@@ -141,11 +142,18 @@
         showHelp();
       },
       requestFile = function() {
-        FILE_JUST_REQUESTED = true;
-        socket.emit('request-file', { path: getDocObjectPath() });
+        var path = getDocObjectPath();
+        if (path !== '') {
+          FILE_JUST_REQUESTED = true;
+          socket.emit('request-file', { path: path });
+        }
       },
       getDocObjectPath = function() {
         var docObject = doc.contentWindow.window.docObject;
+
+        if (! docObject) {
+          return '';
+        }
 
         if (docObject.hasOwnProperty('src')) {
           return docObject['src']['path'];
