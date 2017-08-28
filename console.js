@@ -35,6 +35,7 @@
 					matchBrackets: true,
 					theme: "blackboard"
       }),
+      FILE_JUST_REQUESTED,
 
       //
       // Document Browser
@@ -131,14 +132,16 @@
       toggleEditor = function() {
         var style = editor.parentNode.style;
         if (style.display == "none") {
+          requestFile();
           style.display = "";
         } else {
           style.display = "none";
         }
 
-        requestFile();
+        showHelp();
       },
       requestFile = function() {
+        FILE_JUST_REQUESTED = true;
         socket.emit('request-file', { path: getDocObjectPath() });
       },
       getDocObjectPath = function() {
@@ -366,6 +369,11 @@
         });
 
         mirror.on('change', function(cm, obj){
+          if (FILE_JUST_REQUESTED) {
+            FILE_JUST_REQUESTED = false;
+            return;
+          }
+
           socket.emit('write-file', {
             path: getDocObjectPath(),
             content: cm.getValue()
