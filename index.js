@@ -1,5 +1,4 @@
 const express = require('express');
-console.log('fidojs-kennel-console express', require.resolve('express'));
 const path = require('path');
 
 const app = express();
