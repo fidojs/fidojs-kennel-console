@@ -1,6 +1,6 @@
 {
   "name": "@fidojs/fidojs-kennel-console",
-  "version": "0.2.5-0",
+  "version": "0.2.5",
   "description": "A retro console for FidoJS.",
   "homepage": "https://github.com/fidojs/fidojs-kennel-console#readme",
   "bugs": {
